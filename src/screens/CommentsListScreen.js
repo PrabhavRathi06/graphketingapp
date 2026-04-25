@@ -1,7 +1,14 @@
-import React,{useCallback,useMemo} from 'react';
+import React,{
+useCallback,
+useMemo,
+useState
+} from 'react';
+
 import {
 FlatList,
-ActivityIndicator
+ActivityIndicator,
+TextInput,
+StyleSheet
 } from 'react-native';
 
 import Loader from '../components/Loader';
@@ -10,6 +17,8 @@ import CommentCard from '../components/CommentCard';
 import useComments from '../hooks/useComments';
 
 export default function CommentsListScreen({navigation}) {
+
+const [search,setSearch]=useState('');
 
 const {
 comments,
@@ -38,10 +47,16 @@ const renderItem=useCallback(
 [handlePress]
 );
 
-const memoizedComments=useMemo(
-()=>comments,
-[comments]
-);
+const memoizedComments=useMemo(()=>{
+ return comments.filter(item =>
+  item.name.toLowerCase().includes(
+   search.toLowerCase()
+  ) ||
+  item.email.toLowerCase().includes(
+   search.toLowerCase()
+  )
+ );
+},[comments,search]);
 
 if(loading){
  return <Loader />;
@@ -52,6 +67,14 @@ if(error){
 }
 
 return(
+<>
+<TextInput
+placeholder="Search by name or email"
+value={search}
+onChangeText={setSearch}
+style={styles.search}
+/>
+
 <FlatList
 data={memoizedComments}
 refreshing={refreshing}
@@ -70,6 +93,17 @@ loadingMore
 : null
 }
 />
+
+</>
 );
 
 }
+
+const styles=StyleSheet.create({
+search:{
+margin:10,
+padding:12,
+borderWidth:1,
+borderRadius:8
+}
+});
