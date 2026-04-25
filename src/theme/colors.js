@@ -1,5 +1,5 @@
-export default {                           
- border:'#ddd',
- text:'#222',
- background:'#fff'
+export default {
+  border: '#ddd',
+  text: '#222',
+  background: '#fff',
 };

@@ -1,9 +1,9 @@
 # Graphketing React Native Interview Task
 
 ## Overview
-This project is a React Native CLI application built as part of the practical interview task.
+React Native CLI application built for the practical interview task.
 
-It includes:
+Implemented:
 - Paginated comments list using FlatList
 - Infinite scrolling (10 items per page)
 - Comment detail screen with navigation params
@@ -25,21 +25,25 @@ It includes:
 - React Hooks
 
 ## Project Structure
+```text
 src/
-- screens
-- components
-- api
-- navigation
-- theme
-- hooks
+├── screens
+├── components
+├── api
+├── navigation
+├── theme
+└── hooks
+```
 
-## Setup
-Install dependencies:
-
+## Setup Instructions
+```bash
 npm install
+```
 
 ## Run Android
+```bash
 npx react-native run-android
+```
 
 ## API Used
 https://jsonplaceholder.typicode.com/comments
@@ -47,21 +51,25 @@ https://jsonplaceholder.typicode.com/comments
 Pagination:
 https://jsonplaceholder.typicode.com/comments?_page=1&_limit=10
 
-## Features Implemented
-- Initial loader
-- Infinite scroll pagination
-- Bottom loading indicator
-- Error state with retry
-- Detail screen via params
-- React.memo optimization
-- useCallback and useMemo
-- Custom hook architecture
-
 ## Assumptions / Trade-offs
-- Used JavaScript (allowed by assignment; TypeScript was preferred bonus)
-- Used fetch instead of axios
-- Unit tests not included (optional bonus)
-- Focused on performance and clean architecture over additional libraries
+Focused on implementing required functionality, performance optimizations, and clean code structure.
 
-## Screenshots / Recording
-(Add screenshots or screen recording here)
+## Demo Recording
+[https://drive.google.com/file/d/1QOmcZKwlP6IXGpV1Wyz_YhRpdTcrLYIL/view?usp=sharing]
+
+## Screenshots
+
+### Home Screen
+![Home Screen](screenshots/home.jpeg)
+
+### Detail Screen
+![Detail Screen](screenshots/detail.jpeg)
+
+### Pagination / Infinite Scroll
+![Pagination](screenshots/pagination.png)
+
+### Pull To Refresh
+![Refresh](screenshots/refresh.jpeg)
+
+### Search Feature
+![Search](screenshots/search.jpeg)
