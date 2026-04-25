@@ -1,14 +1,13 @@
-import React,{useState,useEffect,useCallback} from 'react';
+import React,{useState,useEffect} from 'react';
 import {
-View,
-Text,
 FlatList,
-TouchableOpacity,
-ActivityIndicator,
-StyleSheet
+ActivityIndicator
 } from 'react-native';
 
 import {fetchComments} from '../api/commentsApi';
+import Loader from '../components/Loader';
+import ErrorView from '../components/ErrorView';
+import CommentCard from '../components/CommentCard';
 
 export default function CommentsListScreen({navigation}) {
 
@@ -23,9 +22,9 @@ const loadComments=async(pageNumber=1,isPagination=false)=>{
  try{
 
    if(isPagination){
-     setLoadingMore(true);
-   }else{
-     setLoading(true);
+      setLoadingMore(true);
+   } else{
+      setLoading(true);
    }
 
    const data=await fetchComments(pageNumber);
@@ -51,95 +50,49 @@ useEffect(()=>{
 },[]);
 
 const loadMore=()=>{
- if(!loadingMore && hasMore){
-   const nextPage=page+1;
-   setPage(nextPage);
-   loadComments(nextPage,true);
- }
+ if(loadingMore || !hasMore) return;
+
+ const nextPage=page+1;
+ setPage(nextPage);
+ loadComments(nextPage,true);
+};
+
+const handlePress=(item)=>{
+ navigation.navigate('CommentDetail',{
+   comment:item
+ });
 };
 
 const renderItem=({item})=>(
-<TouchableOpacity
- style={styles.card}
- onPress={()=>
- navigation.navigate('CommentDetail',{
-   comment:item
- })
- }
->
-<Text style={styles.name}>
-{item.name}
-</Text>
-
-<Text style={styles.email}>
-{item.email}
-</Text>
-
-<Text
-numberOfLines={2}
-style={styles.body}
->
-{item.body}
-</Text>
-
-</TouchableOpacity>
+ <CommentCard
+   item={item}
+   onPress={handlePress}
+ />
 );
 
 if(loading){
- return(
-  <View style={styles.center}>
-    <ActivityIndicator size="large"/>
-  </View>
- );
+ return <Loader/>;
 }
 
 if(error){
- return(
-<View style={styles.center}>
-<Text>{error}</Text>
-</View>
-);
+ return <ErrorView onRetry={()=>loadComments(1)} />;
 }
 
 return(
 <FlatList
-data={comments}
-keyExtractor={(item)=>item.id.toString()}
-renderItem={renderItem}
-onEndReached={loadMore}
-onEndReachedThreshold={0.5}
-initialNumToRender={10}
-maxToRenderPerBatch={10}
-windowSize={5}
-removeClippedSubviews
-ListFooterComponent={
-loadingMore ?
-<ActivityIndicator/> : null
-}
+ data={comments}
+ keyExtractor={(item)=>item.id.toString()}
+ renderItem={renderItem}
+ onEndReached={loadMore}
+ onEndReachedThreshold={0.5}
+ initialNumToRender={10}
+ maxToRenderPerBatch={10}
+ windowSize={5}
+ removeClippedSubviews
+ ListFooterComponent={
+   loadingMore ? <ActivityIndicator/> : null
+ }
 />
 );
 
 }
-
-const styles=StyleSheet.create({
-center:{
-flex:1,
-justifyContent:'center',
-alignItems:'center'
-},
-card:{
-padding:16,
-margin:10,
-borderWidth:1,
-borderRadius:8
-},
-name:{
-fontWeight:'bold'
-},
-email:{
-marginTop:4
-},
-body:{
-marginTop:8
-}
-});
