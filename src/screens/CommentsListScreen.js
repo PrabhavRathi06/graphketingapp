@@ -79,7 +79,9 @@ style={styles.search}
 data={memoizedComments}
 refreshing={refreshing}
 onRefresh={onRefresh}
-keyExtractor={(item)=>item.id.toString()}
+keyExtractor={(item,index)=>
+`${item.id}-${index}`
+}
 renderItem={renderItem}
 onEndReached={loadMore}
 onEndReachedThreshold={0.5}
