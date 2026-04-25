@@ -1,4 +1,10 @@
-import React,{useState,useEffect} from 'react';
+import React,{
+useState,
+useEffect,
+useCallback,
+useMemo
+} from 'react';
+
 import {
 FlatList,
 ActivityIndicator
@@ -23,7 +29,7 @@ const loadComments=async(pageNumber=1,isPagination=false)=>{
 
    if(isPagination){
       setLoadingMore(true);
-   } else{
+   }else{
       setLoading(true);
    }
 
@@ -33,7 +39,9 @@ const loadComments=async(pageNumber=1,isPagination=false)=>{
       setHasMore(false);
    }else{
       setComments(prev =>
-        isPagination ? [...prev,...data] : data
+       isPagination
+       ? [...prev,...data]
+       : data
       );
    }
 
@@ -57,41 +65,55 @@ const loadMore=()=>{
  loadComments(nextPage,true);
 };
 
-const handlePress=(item)=>{
+const handlePress=useCallback((item)=>{
  navigation.navigate('CommentDetail',{
    comment:item
  });
-};
+},[navigation]);
 
-const renderItem=({item})=>(
- <CommentCard
-   item={item}
-   onPress={handlePress}
- />
+const renderItem=useCallback(
+({item})=>(
+<CommentCard
+ item={item}
+ onPress={handlePress}
+/>
+),
+[handlePress]
+);
+
+const memoizedComments=useMemo(
+()=>comments,
+[comments]
 );
 
 if(loading){
- return <Loader/>;
+ return <Loader />;
 }
 
 if(error){
- return <ErrorView onRetry={()=>loadComments(1)} />;
+ return (
+  <ErrorView
+   onRetry={()=>loadComments(1)}
+  />
+ );
 }
 
 return(
 <FlatList
- data={comments}
- keyExtractor={(item)=>item.id.toString()}
- renderItem={renderItem}
- onEndReached={loadMore}
- onEndReachedThreshold={0.5}
- initialNumToRender={10}
- maxToRenderPerBatch={10}
- windowSize={5}
- removeClippedSubviews
- ListFooterComponent={
-   loadingMore ? <ActivityIndicator/> : null
- }
+data={memoizedComments}
+keyExtractor={(item)=>item.id.toString()}
+renderItem={renderItem}
+onEndReached={loadMore}
+onEndReachedThreshold={0.5}
+initialNumToRender={10}
+maxToRenderPerBatch={10}
+windowSize={5}
+removeClippedSubviews
+ListFooterComponent={
+ loadingMore
+ ? <ActivityIndicator/>
+ : null
+}
 />
 );
 
