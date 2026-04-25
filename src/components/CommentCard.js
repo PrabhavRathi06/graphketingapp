@@ -5,6 +5,8 @@ Text,
 StyleSheet
 } from 'react-native';
 
+import Colors from '../theme/colors';
+
 function CommentCard({item,onPress}){
 
 return(
@@ -12,11 +14,18 @@ return(
 style={styles.card}
 onPress={()=>onPress(item)}
 >
-<Text style={styles.name}>{item.name}</Text>
-<Text>{item.email}</Text>
+<Text style={styles.name}>
+{item.name}
+</Text>
+
+<Text>
+{item.email}
+</Text>
+
 <Text numberOfLines={2}>
 {item.body}
 </Text>
+
 </TouchableOpacity>
 );
 
@@ -29,9 +38,12 @@ card:{
 padding:16,
 margin:10,
 borderWidth:1,
-borderRadius:8
+borderColor:Colors.border,
+borderRadius:8,
+backgroundColor:Colors.background
 },
 name:{
-fontWeight:'bold'
+fontWeight:'bold',
+color:Colors.text
 }
 });
