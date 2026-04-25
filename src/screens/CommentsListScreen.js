@@ -1,74 +1,29 @@
-import React,{
-useState,
-useEffect,
-useCallback,
-useMemo
-} from 'react';
-
+import React,{useCallback,useMemo} from 'react';
 import {
 FlatList,
 ActivityIndicator
 } from 'react-native';
 
-import {fetchComments} from '../api/commentsApi';
 import Loader from '../components/Loader';
 import ErrorView from '../components/ErrorView';
 import CommentCard from '../components/CommentCard';
+import useComments from '../hooks/useComments';
 
 export default function CommentsListScreen({navigation}) {
 
-const [comments,setComments]=useState([]);
-const [page,setPage]=useState(1);
-const [loading,setLoading]=useState(true);
-const [loadingMore,setLoadingMore]=useState(false);
-const [hasMore,setHasMore]=useState(true);
-const [error,setError]=useState(null);
-
-const loadComments=async(pageNumber=1,isPagination=false)=>{
- try{
-
-   if(isPagination){
-      setLoadingMore(true);
-   }else{
-      setLoading(true);
-   }
-
-   const data=await fetchComments(pageNumber);
-
-   if(data.length===0){
-      setHasMore(false);
-   }else{
-      setComments(prev =>
-       isPagination
-       ? [...prev,...data]
-       : data
-      );
-   }
-
- }catch(err){
-   setError('Something went wrong');
- }finally{
-   setLoading(false);
-   setLoadingMore(false);
- }
-};
-
-useEffect(()=>{
- loadComments();
-},[]);
-
-const loadMore=()=>{
- if(loadingMore || !hasMore) return;
-
- const nextPage=page+1;
- setPage(nextPage);
- loadComments(nextPage,true);
-};
+const {
+comments,
+loading,
+error,
+loadingMore,
+loadMore,
+retry
+}=useComments();
 
 const handlePress=useCallback((item)=>{
- navigation.navigate('CommentDetail',{
-   comment:item
- });
+navigation.navigate('CommentDetail',{
+comment:item
+});
 },[navigation]);
 
 const renderItem=useCallback(
@@ -91,11 +46,7 @@ if(loading){
 }
 
 if(error){
- return (
-  <ErrorView
-   onRetry={()=>loadComments(1)}
-  />
- );
+ return <ErrorView onRetry={retry} />;
 }
 
 return(
@@ -110,9 +61,9 @@ maxToRenderPerBatch={10}
 windowSize={5}
 removeClippedSubviews
 ListFooterComponent={
- loadingMore
- ? <ActivityIndicator/>
- : null
+loadingMore
+? <ActivityIndicator/>
+: null
 }
 />
 );
