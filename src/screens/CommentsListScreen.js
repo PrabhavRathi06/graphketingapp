@@ -16,8 +16,10 @@ comments,
 loading,
 error,
 loadingMore,
+refreshing,
 loadMore,
-retry
+retry,
+onRefresh
 }=useComments();
 
 const handlePress=useCallback((item)=>{
@@ -52,6 +54,8 @@ if(error){
 return(
 <FlatList
 data={memoizedComments}
+refreshing={refreshing}
+onRefresh={onRefresh}
 keyExtractor={(item)=>item.id.toString()}
 renderItem={renderItem}
 onEndReached={loadMore}
